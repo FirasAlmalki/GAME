@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لعبة الكلمة</title>
+  <style>
+    body { font-family: sans-serif; background:#f4f4f8; margin:0; padding:20px; text-align:center; }
+    h1 { margin-bottom:30px; }
+    .rooms { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+    .room { background:white; padding:20px; width:200px; border-radius:15px; box-shadow:0 0 10px #ccc; cursor:pointer; }
+    .hidden{ display:none; }
+    .btn { padding:10px 20px; background:#4a6cf7; color:white; border:none; border-radius:8px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h1>لعبة الكلمة</h1>
+
+  <div id="rooms" class="rooms">
+    <div class="room" onclick="joinRoom(1)">الغرفة 1<br><span id="c1">0 لاعبين</span></div>
+    <div class="room" onclick="joinRoom(2)">الغرفة 2<br><span id="c2">0 لاعبين</span></div>
+    <div class="room" onclick="joinRoom(3)">الغرفة 3<br><span id="c3">0 لاعبين</span></div>
+    <div class="room" onclick="joinRoom(4)">الغرفة 4<br><span id="c4">0 لاعبين</span></div>
+  </div>
+
+  <div id="game" class="hidden">
+    <h2 id="roomTitle"></h2>
+    <p>اللاعبون:</p>
+    <div id="players"></div>
+    <button id="readyBtn" class="btn" onclick="toggleReady()">أنا مستعد</button>
+    <h3 id="countdown" class="hidden"></h3>
+    <h2 id="wordDisplay" class="hidden"></h2>
+    <button class="btn hidden" id="logoutBtn" onclick="logout()">الخروج وإعادة اللعبة</button>
+  </div>
+
+<script>
+let words = ["سيارة", "بحر", "كتاب", "قهوة", "نملة"]; // يمكنك تعديلها
+let data = JSON.parse(localStorage.getItem("ROOM_DATA") || "{}" );
+let myName = null, myRoom = null, isReady = false;
+
+function save(){ localStorage.setItem("ROOM_DATA", JSON.stringify(data)); render(); }
+
+function joinRoom(num){
+  let name = prompt("اسمك؟");
+  if(!name) return;
+  myName = name; myRoom = num;
+  if(!data[num]) data[num] = {players:{}, readyCount:0};
+  data[num].players[name] = {ready:false};
+  save();
+  document.getElementById("rooms").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("roomTitle").innerText = "الغرفة " + num;
+  render();
+}
+
+function render(){
+  for(let i=1;i<=4;i++){
+    let c = data[i] ? Object.keys(data[i].players).length : 0;
+    document.getElementById("c"+i).innerText = c + " لاعبين";
+  }
+  if(!myRoom) return;
+  let p = data[myRoom].players;
+  let out = "";
+  for(let n in p) out += n + (p[n].ready ? " ✅" : " ❌") + "<br>";
+  document.getElementById("players").innerHTML = out;
+
+  // تحقق ان العدد 4 او اكثر وكلهم جاهزين
+  let total = Object.keys(p).length;
+  let readyCount = Object.values(p).filter(x=>x.ready).length;
+
+  if(total >= 4 && readyCount === total){
+    startGame();
+  }
+}
+
+function toggleReady(){
+  let r = data[myRoom];
+  r.players[myName].ready = !r.players[myName].ready;
+  save();
+}
+
+function startGame(){
+  document.getElementById("readyBtn").classList.add("hidden");
+  let countdownEl = document.getElementById("countdown");
+  countdownEl.classList.remove("hidden");
+  let w = document.getElementById("wordDisplay");
+  let randomWord = words[Math.floor(Math.random()*words.length)];
+  let players = Object.keys(data[myRoom].players);
+  let fake = players[Math.floor(Math.random()*players.length)];
+
+  let sec = 5;
+  countdownEl.innerText = sec;
+  let timer = setInterval(()=>{
+    sec--; countdownEl.innerText = sec;
+    if(sec===0){
+      clearInterval(timer);
+      countdownEl.classList.add("hidden");
+      w.classList.remove("hidden");
+      w.innerText = (myName === fake) ? "برا السالفة" : randomWord;
+      document.getElementById("logoutBtn").classList.remove("hidden");
+    }
+  },1000);
+}
+
+function logout(){
+  delete data[myRoom].players[myName];
+  localStorage.setItem("ROOM_DATA", JSON.stringify(data));
+  location.reload();
+}
+
+render();
+</script>
+</body>
+</html>
