@@ -24,8 +24,8 @@ function updateRoom(roomId) {
   const r = rooms[roomId];
   if (!r) return;
   const players = Object.entries(r.players).map(([id, p]) => ({ id, name: p.name, ready: p.ready, playAgain: p.playAgain }));
-  // send owner id so client can decide who can change words
-  io.to(roomId).emit('roomData', { players, owner: r.owner, gameStarted: !!r.game });
+  // send owner id and words so client can decide who can change words
+  io.to(roomId).emit('roomData', { players, owner: r.owner, gameStarted: !!r.game, words: r.words || [] });
 }
 
 function startGame(roomId) {

@@ -23,15 +23,25 @@
     <div id="roomsList" class="rooms"></div>
   </div>
 
-  <div id="game" class="hidden card">
-    <h2 id="roomTitle"></h2>
-    <div id="players"></div>
-    <button id="readyBtn" class="btn" onclick="toggleReady()">أنا مستعد</button>
-    <button id="settingsBtn" class="btn hidden" onclick="showSettings()">تغيير الكلمات</button>
-    <h3 id="countdown" class="hidden"></h3>
-    <h2 id="wordDisplay" class="hidden"></h2>
-    <button class="btn hidden" id="playAgainBtn" onclick="playAgain()">اللعب مرة أخرى</button>
-    <button class="btn" id="leaveBtn" onclick="leaveRoom()">الخروج</button>
+  <div id="game" class="hidden game-wrapper">
+    <div class="game-main">
+      <h2 id="roomTitle"></h2>
+      <div id="players"></div>
+      <button id="readyBtn" class="btn" onclick="toggleReady()">أنا مستعد</button>
+      <h3 id="countdown" class="hidden"></h3>
+      <h2 id="wordDisplay" class="hidden"></h2>
+      <button class="btn hidden" id="playAgainBtn" onclick="playAgain()">اللعب مرة أخرى</button>
+      <button class="btn" id="leaveBtn" onclick="leaveRoom()">الخروج</button>
+    </div>
+    
+    <div id="settingsPanel" class="settings-panel hidden">
+      <h3>الكلمات</h3>
+      <div id="wordsList" class="words-list"></div>
+      <div class="word-input-group">
+        <input id="wordInput" placeholder="أدخل كلمة" />
+        <button class="btn-small" onclick="addWord()">+</button>
+      </div>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
