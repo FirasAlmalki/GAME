@@ -1,12 +1,69 @@
-body { font-family: sans-serif; background:#f4f4f8; margin:0; padding:20px; text-align:center; }
-h1 { margin-bottom:30px; }
-.rooms { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
-.card { background:white; padding:20px; margin:10px auto; max-width:400px; border-radius:15px; box-shadow:0 0 10px #ccc; }
-.room { background:#e1eaff; padding:15px; width:180px; border-radius:10px; box-shadow:0 0 5px #bbb; cursor:pointer; }
-.hidden { display:none; }
-.btn { padding:10px 20px; background:#4a6cf7; color:white; border:none; border-radius:8px; cursor:pointer; }
-input { width:calc(100% - 20px); padding:8px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
-#players { text-align:right; margin-bottom:15px; }
+/* improved visual theme */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  color: #222;
+}
+h1 {
+  margin-bottom: 30px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,.4);
+}
+.rooms {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.card {
+  background: rgba(255,255,255,0.95);
+  padding: 30px;
+  margin: 10px auto;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,.2);
+  transition: transform .2s;
+}
+.card:hover { transform: translateY(-5px); }
+.room {
+  background: #fff;
+  padding: 20px;
+  width: 180px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.2);
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+.room:hover {
+  background: #e0e7ff;
+  transform: scale(1.05);
+}
+.hidden { display: none; }
+.btn {
+  padding: 12px 24px;
+  background: #ff5c5c;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background .2s;
+}
+.btn:hover { background: #ff1f1f; }
+.input-group input, input {
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+#players { text-align: right; margin-bottom:15px; }
 #players div { margin:5px 0; }
-#wordDisplay { margin-top:20px; font-size:2em; }
-#countdown { margin-top:15px; font-size:1.5em; }
+#wordDisplay { margin-top:20px; font-size:2em; color:#333; }
+#countdown { margin-top:15px; font-size:1.5em; color:#222; }
+

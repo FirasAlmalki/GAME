@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>لعبة الكلمة</title>
   <link rel="stylesheet" href="/style.css" />
+  <!-- google font imported in CSS but add fallback -->
 </head>
 <body>
   <div id="lobby">
     <h1>لعبة الكلمة</h1>
     <div id="createRoom" class="card">
-      <input id="roomName" placeholder="اسم الغرفة" />
-      <input id="playerName" placeholder="اسمك" />
+      <div class="input-group">
+        <input id="roomName" placeholder="اسم الغرفة" />
+      </div>
+      <div class="input-group">
+        <input id="playerName" placeholder="اسمك" />
+      </div>
       <button class="btn" onclick="createRoom()">إنشاء غرفة</button>
     </div>
     <h2>الغرف المتاحة</h2>
