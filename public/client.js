@@ -4,9 +4,17 @@ let myName = null;
 let gameInProgress = false;
 let isOwner = false;
 let roomWords = [];
+let readyState = false;
+
+// initial visibility
+window.addEventListener('load', () => {
+  document.getElementById('lobby').classList.remove('hidden');
+  document.getElementById('game').classList.add('hidden');
+});
 
 socket.on('connect', () => {
-  // socket.id is available after connect
+  // request list right away so other devices see rooms
+  socket.emit('requestRoomList');
 });
 
 socket.on('roomList', list => {
@@ -40,6 +48,14 @@ socket.on('roomData', data => {
   isOwner = data.owner === socket.id;
   roomWords = data.words || [];
   updateWordsList();
+
+  // update our own button text
+  const me = data.players.find(p => p.id === socket.id);
+  if (me) {
+    readyState = me.ready;
+    const btn = document.getElementById('readyBtn');
+    btn.innerText = readyState ? 'غير جاهز' : 'أنا مستعد';
+  }
   
   // check if game is still running, if not reset gameInProgress
   if (!data.gameStarted && gameInProgress) {
@@ -99,6 +115,9 @@ function joinPrompt(roomId) {
 }
 
 function toggleReady() {
+  readyState = !readyState;
+  const btn = document.getElementById('readyBtn');
+  btn.innerText = readyState ? 'غير جاهز' : 'أنا مستعد';
   socket.emit('toggleReady');
 }
 

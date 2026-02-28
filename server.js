@@ -69,6 +69,11 @@ function checkPlayAgain(roomId) {
 io.on('connection', socket => {
   console.log('user connected', socket.id);
 
+  socket.on('requestRoomList', () => {
+    const list = Object.entries(rooms).map(([id, r]) => ({ id, name: r.name, count: Object.keys(r.players).length }));
+    socket.emit('roomList', list);
+  });
+
   socket.on('createRoom', ({ roomName, playerName }) => {
     if (!roomName || !playerName) return;
     let roomId = Math.random().toString(36).substr(2, 4);
