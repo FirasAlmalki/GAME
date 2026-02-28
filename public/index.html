@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لعبة الكلمة</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="lobby">
+    <h1>لعبة الكلمة</h1>
+    <div id="createRoom" class="card">
+      <input id="roomName" placeholder="اسم الغرفة" />
+      <input id="playerName" placeholder="اسمك" />
+      <button class="btn" onclick="createRoom()">إنشاء غرفة</button>
+    </div>
+    <h2>الغرف المتاحة</h2>
+    <div id="roomsList" class="rooms"></div>
+  </div>
+
+  <div id="game" class="hidden card">
+    <h2 id="roomTitle"></h2>
+    <div id="players"></div>
+    <button id="readyBtn" class="btn" onclick="toggleReady()">أنا مستعد</button>
+    <h3 id="countdown" class="hidden"></h3>
+    <h2 id="wordDisplay" class="hidden"></h2>
+    <button class="btn hidden" id="playAgainBtn" onclick="playAgain()">اللعب مرة أخرى</button>
+    <button class="btn" id="leaveBtn" onclick="leaveRoom()">الخروج</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>

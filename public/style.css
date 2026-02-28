@@ -1,0 +1,12 @@
+body { font-family: sans-serif; background:#f4f4f8; margin:0; padding:20px; text-align:center; }
+h1 { margin-bottom:30px; }
+.rooms { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+.card { background:white; padding:20px; margin:10px auto; max-width:400px; border-radius:15px; box-shadow:0 0 10px #ccc; }
+.room { background:#e1eaff; padding:15px; width:180px; border-radius:10px; box-shadow:0 0 5px #bbb; cursor:pointer; }
+.hidden { display:none; }
+.btn { padding:10px 20px; background:#4a6cf7; color:white; border:none; border-radius:8px; cursor:pointer; }
+input { width:calc(100% - 20px); padding:8px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
+#players { text-align:right; margin-bottom:15px; }
+#players div { margin:5px 0; }
+#wordDisplay { margin-top:20px; font-size:2em; }
+#countdown { margin-top:15px; font-size:1.5em; }
