@@ -2,6 +2,11 @@ const socket = io();
 let currentRoom = null;
 let myName = null;
 let gameInProgress = false;
+let isOwner = false;
+
+socket.on('connect', () => {
+  // socket.id is available after connect
+});
 
 socket.on('roomList', list => {
   const div = document.getElementById('roomsList');
@@ -30,6 +35,9 @@ socket.on('roomData', data => {
     d.innerText = p.name + (p.ready ? ' ✅' : ' ❌');
     div.appendChild(d);
   });
+  // determine owner
+  isOwner = data.owner === socket.id;
+  document.getElementById('settingsBtn').style.display = isOwner && !gameInProgress ? 'inline-block' : 'none';
 });
 
 socket.on('gameStart', info => {
@@ -79,6 +87,13 @@ function toggleReady() {
 function playAgain() {
   socket.emit('playAgain');
   document.getElementById('playAgainBtn').classList.add('hidden');
+}
+
+function showSettings() {
+  const words = prompt('أدخل الكلمات مفصولة بفاصلة (،)', '');
+  if (words === null) return;
+  const arr = words.split('،').map(w=>w.trim()).filter(w=>w);
+  socket.emit('updateWords', arr);
 }
 
 function leaveRoom() {

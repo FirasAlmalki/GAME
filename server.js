@@ -6,8 +6,14 @@ const io = require('socket.io')(http);
 // serve static assets
 app.use(express.static('public'));
 
-const words = ["سيارة","بحر","كتاب","قهوة","نملة","قلم","تفاحة","شمس","قمر","نحلة"];
-const rooms = {}; // roomId -> { name, players: { socketId: {name, ready, playAgain} }, game: {word, fakeId} | null }
+// no global word list any more - owner chooses per room
+const rooms = {}; // roomId -> {
+//   name,
+//   owner: socketId,
+//   words: [ ... ],
+//   players: { socketId: {name, ready, playAgain} },
+//   game: {word, fakeId} | null
+// }
 
 function updateRoomList() {
   const list = Object.entries(rooms).map(([id, r]) => ({ id, name: r.name, count: Object.keys(r.players).length }));
@@ -18,13 +24,16 @@ function updateRoom(roomId) {
   const r = rooms[roomId];
   if (!r) return;
   const players = Object.entries(r.players).map(([id, p]) => ({ id, name: p.name, ready: p.ready, playAgain: p.playAgain }));
-  io.to(roomId).emit('roomData', { players, gameStarted: !!r.game });
+  // send owner id so client can decide who can change words
+  io.to(roomId).emit('roomData', { players, owner: r.owner, gameStarted: !!r.game });
 }
 
 function startGame(roomId) {
   const r = rooms[roomId];
   if (!r) return;
-  const word = words[Math.floor(Math.random() * words.length)];
+  // pick from room words, fall back to default small list if empty
+  const list = (r.words && r.words.length > 0) ? r.words : ["سيارة","بحر","كتاب","قهوة","نملة","قلم","تفاحة","شمس","قمر","نحلة"];
+  const word = list[Math.floor(Math.random() * list.length)];
   const playerIds = Object.keys(r.players);
   const fake = playerIds[Math.floor(Math.random() * playerIds.length)];
   r.game = { word, fake };
@@ -64,7 +73,7 @@ io.on('connection', socket => {
     if (!roomName || !playerName) return;
     let roomId = Math.random().toString(36).substr(2, 4);
     while (rooms[roomId]) roomId = Math.random().toString(36).substr(2, 4);
-    rooms[roomId] = { name: roomName, players: {}, game: null };
+    rooms[roomId] = { name: roomName, owner: socket.id, words: [], players: {}, game: null };
     socket.join(roomId);
     rooms[roomId].players[socket.id] = { name: playerName, ready: false, playAgain: false };
     updateRoomList();
@@ -102,6 +111,18 @@ io.on('connection', socket => {
     checkPlayAgain(roomId);
   });
 
+  // owner can change word list
+  socket.on('updateWords', (newWords) => {
+    const roomId = Object.keys(socket.rooms).find(r => r !== socket.id);
+    if (!roomId) return;
+    const r = rooms[roomId];
+    if (!r || r.owner !== socket.id) return; // only owner
+    if (Array.isArray(newWords)) {
+      r.words = newWords.filter(w=>typeof w==='string' && w.trim().length>0).map(w=>w.trim());
+      updateRoom(roomId);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log('disconnect', socket.id);
     for (const roomId in rooms) {
@@ -112,6 +133,11 @@ io.on('connection', socket => {
           delete rooms[roomId];
           updateRoomList();
         } else {
+          // if owner left, pick a new owner (first remaining)
+          if (rooms[roomId].owner === socket.id) {
+            const remaining = Object.keys(rooms[roomId].players);
+            rooms[roomId].owner = remaining.length ? remaining[0] : null;
+          }
           updateRoom(roomId);
           updateRoomList();
         }
